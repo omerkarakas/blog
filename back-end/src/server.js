@@ -1,24 +1,27 @@
 import express from 'express';
 import { MongoClient } from 'mongodb';
+import path from 'path';
 
-const articlesInfo = {
-  'learn-react': {
-    upvotes: 0,
-    comments: [],
-  },
-  'learn-node': {
-    upvotes: 0,
-    comments: [],
-  },
-  'my-thoughts-on-resumes': {
-    upvotes: 0,
-    comments: [],
-  },
-};
+// const articlesInfo = {
+//   'learn-react': {
+//     upvotes: 0,
+//     comments: [],
+//   },
+//   'learn-node': {
+//     upvotes: 0,
+//     comments: [],
+//   },
+//   'my-thoughts-on-resumes': {
+//     upvotes: 0,
+//     comments: [],
+//   },
+// };
 
 const app = express();
+app.use(express.static(path.join(__dirname, '/build')));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+const PORT = 5000;
 
 const withDB = async (operations, res) => {
   try {
@@ -93,7 +96,9 @@ app.post('/api/articles/:name/add-comment', (req, res) => {
   }, res);
 });
 
-const PORT = 5000;
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '/build/index.html'));
+});
 
 app.listen(PORT, () => {
   console.log(`Server is up on port ${PORT}`);
